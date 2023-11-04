@@ -24,20 +24,6 @@ def stereo_disparity_fast(Il, Ir, bbox, maxd):
     --------
     Id  - Disparity image (map) as np.array, same size as Il.
     """
-    # Hints:
-    #
-    #  - Loop over each image row, computing the local similarity measure, then
-    #    aggregate. At the border, you may replicate edge pixels, or just avoid
-    #    using values outside of the image.
-    #
-    #  - You may hard-code any parameters you require in this function.
-    #
-    #  - Use whatever window size you think might be suitable.
-    #
-    #  - Optimize for runtime AND for clarity.
-
-    #--- FILL ME IN ---
-
     p = 11
     q = 11
 
@@ -72,12 +58,5 @@ def stereo_disparity_fast(Il, Ir, bbox, maxd):
     # Now we have the region in the bounding box, but we need to put it back into the full image
     # To do this we simply pad with 0s
     Id[y_start:y_end + 1, x_start:x_end + 1] = disparity_image
-
-    #------------------
-
-    correct = isinstance(Id, np.ndarray) and Id.shape == Il.shape
-
-    if not correct:
-        raise TypeError("Wrong type or size returned!")
 
     return Id

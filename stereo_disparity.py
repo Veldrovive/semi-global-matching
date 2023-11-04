@@ -91,38 +91,6 @@ def stereo_disparity(Il, Ir, bbox, maxd, window=5, P1=6.6, P2=6.6*5, spatial_sig
     --------
     Id  - Disparity image (map) as np.array, same size as Il.
     """
-    # Hints:
-    #
-    #  - Loop over each image row, computing the local similarity measure, then
-    #    aggregate. At the border, you may replicate edge pixels, or just avoid
-    #    using values outside of the image.
-    #
-    #  - You may hard-code any parameters you require in this function.
-    #
-    #  - Use whatever window size you think might be suitable.
-    #
-    #  - Optimize for runtime AND for clarity.
-
-    #--- FILL ME IN ---
-
-    """
-    This algorithm uses the census transform (with hamming distance as the similarity metric) with an
-    8 direction semi-global matching algorithm. The 4 direction SGM algorithm performed just as well on
-    the easy examples, but 8 direction was much better on the hard examples.
-    We also post processes with a median filter and bilateral filter to try to remove noise and smooth the disparity map.
-    We use the original image as the guidance image for the bilateral filter because we assume that changes in depth
-    correspond with changes in intensity.
-
-    The idea to use census came from this tutorial https://www.kaggle.com/code/christianorr/semi-global-matching-with-numpy,
-    but for a general resource I actually found the wikipedia page https://en.wikipedia.org/wiki/Semi-global_matching to be the most helpful.
-
-    Originally I was also taking a gradient first, but after switching to census the lighting invariance is in-built so
-    it only hurt performance.
-
-    Bayesian optimization was used to solve for a set of parameters that minimized the cost function (RMS + Percentage Bad)
-    on the cones dataset.
-    """
-
     x_start, x_end = bbox[0]
     y_start, y_end = bbox[1]
 
@@ -251,13 +219,5 @@ def stereo_disparity(Il, Ir, bbox, maxd, window=5, P1=6.6, P2=6.6*5, spatial_sig
     Id[y_start:y_end + 1, x_start:x_end + 1] = best_disparities[y_start:y_end + 1, x_start:x_end + 1]
     # Apply bilateral filter using the original image as the guidance image following the heuristic that changes in depth correspond with changes in intensity
     Id = bilateral_filter(Id, Il, spatial_sigma, intensity_sigma)
-
-
-    #------------------
-
-    correct = isinstance(Id, np.ndarray) and Id.shape == Il.shape
-
-    if not correct:
-        raise TypeError("Wrong type or size returned!")
 
     return Id
